@@ -127,3 +127,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+data/winred/sa_winred_july_2021_midyear.csv
+data/winred/sa_winred_oct_2020_quarterly.csv
+
+.DS_Store
