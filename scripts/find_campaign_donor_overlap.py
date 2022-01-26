@@ -85,8 +85,7 @@ def main():
         out_data += process_campaign(campaign, all_campaigns, donor_lists, i)
 
         if ((i + 1) % 25 == 0):
-            print(
-                f"Finished with {i+1} records! Total time: {time.time() - start}")
+            print(f"{i+1} records done! Total time: {time.time() - start}")
 
     with open(OVERLAP_OUTFILE_DESTINATION, 'w') as f:
         out_csv = csv.DictWriter(f, fieldnames=list(out_data[0].keys()))
