@@ -129,12 +129,14 @@ dmypy.json
 .pyre/
 
 # Raw datafiles excluded for size
-data/winred/sa_winred_july_2021_midyear.csv
-data/winred/sa_winred_oct_2020_quarterly.csv
+data/winred/sa_winred_*.csv
 
 # Processed datafiles excluded for size (samples have been included in same directory)
 data/processed_data/contributions/candidate_donor_mappings.csv
 data/processed_data/contributions/consolidated_winred.csv
+
+# Cached donor list file is too large for remote storage
+data/processed_data/overlap/donor_lists.json
 
 .DS_Store
 auth/fec_api_key.txt

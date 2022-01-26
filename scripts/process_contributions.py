@@ -16,7 +16,8 @@ def process_row(row, ccl_mappings):
     if "Earmarked for " not in row["memo_text"] or "(" not in row["memo_text"]:
         return None
 
-    donor_id = row["first_name"] + "~" + row["last_name"] + row["zip"]
+    donor_id = row["first_name"].lower() + "~" + \
+        row["last_name"].lower() + "~" + row["zip"]
     destination_committee = row["memo_text"].split("(")[1].strip(")")
 
     out_data = {k: v for k, v in row.items() if k in RETAINED_FIELDS}
