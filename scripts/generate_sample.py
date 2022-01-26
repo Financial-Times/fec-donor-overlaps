@@ -7,7 +7,7 @@ with open('../data/winred/sa_winred_july_2021_midyear.csv', 'r') as f:
     for _ in range(sample_rows):
         outdata.append(next(infile))
 
-with open('../data/processed_data/sa_winred_sample.csv', 'w') as f:
+with open('../data/winred/samples/sa_winred_2021_sample.csv', 'w') as f:
     outfile = csv.DictWriter(f, fieldnames=list(outdata[0].keys()))
     outfile.writeheader()
     for row in outdata:
