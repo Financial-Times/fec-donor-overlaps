@@ -6,13 +6,62 @@ OVERLAP_SOURCE = "../data/processed_data/overlap/donor_overlap.csv"
 TOTALS_SOURCE = "../data/processed_data/overlap/donor_totals.csv"
 CAMPAIGN_DATA_SOURCE = "../data/processed_data/campaign_data.json"
 
+OUTFILE_DESTINATION = "../data/processed_data/overlap/rich_overlap_data.csv"
 
-def process_row():
-    pass
+
+def process_row(row, donor_totals, campaign_details_data, reverse_direction=False):
+    if reverse_direction == True:
+        outgoing_candidate_id = row["campaign_2"]
+        incoming_candidate_id = row["campaign_1"]
+    else:
+        outgoing_candidate_id = row["campaign_1"]
+        incoming_candidate_id = row["campaign_2"]
+
+    outgoing_candidate_data = campaign_details_data[outgoing_candidate_id]
+    incoming_candidate_data = campaign_details_data[incoming_candidate_id]
+
+    row_output_data = {
+        "outgoing_candidate_id": outgoing_candidate_id,
+        "outgoing_candidate_name": outgoing_candidate_data["full_name"],
+        "outgoing_candidate_office": outgoing_candidate_data["office"],
+        "outgoing_candidate_state": outgoing_candidate_data["state"],
+        "outgoing_candidate_district": outgoing_candidate_data["district"],
+        "outgoing_candidate_cycle": outgoing_candidate_data["campaign_cycle"],
+        "outgoing_candidate_total_donors": int(donor_totals[outgoing_candidate_id]),
+        "incoming_candidate_id": incoming_candidate_id,
+        "incoming_candidate_name": incoming_candidate_data["full_name"],
+        "incoming_candidate_office": incoming_candidate_data["office"],
+        "incoming_candidate_state": incoming_candidate_data["state"],
+        "incoming_candidate_district": incoming_candidate_data["district"],
+        "incoming_candidate_cycle": incoming_candidate_data["campaign_cycle"],
+        "incoming_candidate_total_donors": int(donor_totals[incoming_candidate_id]),
+        "overlap_count": int(row["overlap_count"]),
+        "overlap_pct_of_outgoing": round(int(row["overlap_count"]) / int(donor_totals[outgoing_candidate_id]), 4),
+        "overlap_pct_of_incoming": round(int(row["overlap_count"]) / int(donor_totals[incoming_candidate_id]), 4)
+    }
+
+    return row_output_data
 
 
 def append_rich_data(overlap_counts, donor_totals, campaign_details_data):
-    pass
+    output_data = []
+
+    for row in overlap_counts:
+        # I kept overlap with self in on the raw data for now because I felt like it might make sense in some aggregations? (probably not),
+        # ...but we'll exclude those rows here
+        if row["campaign_1"] == row["campaign_2"]:
+            continue
+
+        # We excluded duplicates to keep the data size down on the last script, but here, for ease of searching/filtering,
+        # ...we do probably want to represent each overlap both ways, so there will be twice as much data, but it will be easier
+        # ...to locate what we're looking for. Unless/until we put this in a database and normalize a little, this is probably better
+        processed_row = process_row(row, donor_totals, campaign_details_data)
+        reversed_processed_row = process_row(
+            row, donor_totals, campaign_details_data, reverse_direction=True)
+
+        output_data += [processed_row, reversed_processed_row]
+
+    return output_data
 
 
 def main():
@@ -20,7 +69,8 @@ def main():
         campaign_details_data = json.load(f)
 
     with open(TOTALS_SOURCE, 'r') as f:
-        donor_totals = [x for x in csv.DictReader(f)]
+        donor_totals = {x["campaign_id"]: x["total_unique_donors"]
+                        for x in csv.DictReader(f)}
 
     with open(OVERLAP_SOURCE, 'r') as f:
         overlap_counts = [x for x in csv.DictReader(f)]
@@ -28,11 +78,12 @@ def main():
     processed_data = append_rich_data(
         overlap_counts, donor_totals, campaign_details_data)
 
-    # with open(OUTFILE_DESTINATION, 'w') as f:
-    #     out_csv = csv.DictWriter(f, fieldnames=list(out_data[0].keys()))
-    #     out_csv.writeheader()
-    #     for row in out_data:
-    #         out_csv.writerow(row)
+    processed_data.sort(key=lambda x: x["overlap_count"], reverse=True)
+    with open(OUTFILE_DESTINATION, 'w') as f:
+        out_csv = csv.DictWriter(f, fieldnames=list(processed_data[0].keys()))
+        out_csv.writeheader()
+        for row in processed_data:
+            out_csv.writerow(row)
 
 
 if __name__ == "__main__":
