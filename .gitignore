@@ -135,6 +135,7 @@ data/actblue/sa_actblue_*.csv
 # Processed datafiles excluded for size (samples have been included in same directory)
 data/processed_data/contributions/candidate_donor_mappings.csv
 data/processed_data/contributions/consolidated_winred.csv
+data/processed_data/contributions/consolidated_actblue.csv
 
 # Cached donor list file is too large for remote storage
 data/processed_data/overlap/donor_lists.json
