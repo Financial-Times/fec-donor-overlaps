@@ -2,11 +2,11 @@ import os
 import csv
 import json
 
-DATAFILE_DIRECTORY = "../data/winred"
-OUTFILE_DESTINATION = "../data/processed_data/contributions/consolidated_winred.csv"
+DATAFILE_DIRECTORY = "../data/actblue"
+OUTFILE_DESTINATION = "../data/processed_data/contributions/consolidated_actblue.csv"
 # saving some file size by removing "employer", "occupation" for now, but
 # ...some version of this processed data may eventually need to include these
-RETAINED_FIELDS = ["first_name", "last_name", "zip", "date", "amount"]
+RETAINED_FIELDS = ["first_name", "last_name", "zip", "date", "amount", "cycle"]
 
 
 def process_row(row, ccl_mappings):

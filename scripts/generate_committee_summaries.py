@@ -2,8 +2,8 @@ import os
 import csv
 
 
-DATAFILE_SOURCE = "../data/processed_data/contributions/consolidated_winred.csv"
-OUTFILE_DESTINATION = "../data/processed_data/contributions/winred_committee_summaries.csv"
+DATAFILE_SOURCE = "../data/processed_data/contributions/consolidated_actblue.csv"
+OUTFILE_DESTINATION = "../data/processed_data/contributions/actblue_committee_summaries.csv"
 
 
 def get_committee_data():

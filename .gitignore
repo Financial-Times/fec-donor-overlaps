@@ -130,6 +130,7 @@ dmypy.json
 
 # Raw datafiles excluded for size
 data/winred/sa_winred_*.csv
+data/actblue/sa_actblue_*.csv
 
 # Processed datafiles excluded for size (samples have been included in same directory)
 data/processed_data/contributions/candidate_donor_mappings.csv
