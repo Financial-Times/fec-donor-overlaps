@@ -11,6 +11,8 @@ for row in all_rows:
     current_data = output_data.get(key, {
         "first_name": row["contributor_first_name"],
         "last_name": row["contributor_last_name"],
+        "occupation": row["contributor_occupation"],
+        "employer": row["contributor_employer"],
         "zipcode": row["contributor_zip_code"],
         "committee_id": row["filer_committee_id_number"],
         "total_amount": 0.0

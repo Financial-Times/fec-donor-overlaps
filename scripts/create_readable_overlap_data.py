@@ -59,7 +59,10 @@ def append_rich_data(overlap_counts, donor_totals, campaign_details_data):
         reversed_processed_row = process_row(
             row, donor_totals, campaign_details_data, reverse_direction=True)
 
-        output_data += [processed_row, reversed_processed_row]
+        # Adding a threshold of at least 20 overlapping donors before adding to output file
+        # This alone basically cuts the file size by more than half
+        if processed_row["overlap_count"] > 20:
+            output_data += [processed_row, reversed_processed_row]
 
     return output_data
 

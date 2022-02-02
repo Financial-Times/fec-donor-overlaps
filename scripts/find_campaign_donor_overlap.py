@@ -23,8 +23,8 @@ def get_donor_lists(all_campaigns, mappings_df):
     # we can referesh the cached file based on last modified time (or if there's no file found)
     try:
         last_modified_time = os.path.getmtime(DONOR_LIST_SOURCE)
-        # Checks if cached file has been updated in the last 30 days (2,592,000 seconds)
-        if time.time() - last_modified_time > 2592000:
+        # Checks if cached file has been updated in the last 15 days (1,296,000 seconds)
+        if time.time() - last_modified_time > 1296000:
             cached_file = False
     except FileNotFoundError:
         cached_file = False
@@ -74,7 +74,6 @@ def process_campaign(current_id, all_ids, donor_lists, current_index):
 
 def main():
     mappings_df = pd.read_csv(DATAFILE_SOURCE)
-    print(mappings_df.head())
 
     all_campaigns = mappings_df.campaign_id.unique()
     donor_lists = get_donor_lists(all_campaigns, mappings_df)
