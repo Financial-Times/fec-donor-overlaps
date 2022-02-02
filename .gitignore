@@ -135,12 +135,15 @@ data/trump_committees/fec_files/*
 data/trump_committees/schedule_a_indiv/*.csv
 
 # Processed datafiles excluded for size (samples have been included in same directory)
+data/processed_data/contributions/winred_candidate_donor_mappings.csv
+data/processed_data/contributions/actblue_candidate_donor_mappings.csv
 data/processed_data/contributions/candidate_donor_mappings.csv
 data/processed_data/contributions/consolidated_winred.csv
 data/processed_data/contributions/consolidated_actblue.csv
 
 # Cached donor list file is too large for remote storage
-data/processed_data/overlap/donor_lists.json
+data/processed_data/overlap/winred_donor_lists.json
+data/processed_data/overlap/actblue_donor_lists.json
 
 .DS_Store
 auth/fec_api_key.txt

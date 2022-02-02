@@ -4,12 +4,13 @@ import json
 import csv
 import pandas as pd
 
+committee_for_analysis = "winred"
 
-DATAFILE_SOURCE = "../data/processed_data/contributions/candidate_donor_mappings.csv"
-DONOR_LIST_SOURCE = "../data/processed_data/overlap/donor_lists.json"
+DATAFILE_SOURCE = f"../data/processed_data/contributions/{committee_for_analysis}_candidate_donor_mappings.csv"
+DONOR_LIST_SOURCE = f"../data/processed_data/overlap/{committee_for_analysis}_donor_lists.json"
 
-OVERLAP_OUTFILE_DESTINATION = "../data/processed_data/overlap/donor_overlap.csv"
-TOTALS_OUTFILE_DESTINATION = "../data/processed_data/overlap/donor_totals.csv"
+OVERLAP_OUTFILE_DESTINATION = f"../data/processed_data/overlap/{committee_for_analysis}_donor_overlap.csv"
+TOTALS_OUTFILE_DESTINATION = f"../data/processed_data/overlap/{committee_for_analysis}_donor_totals.csv"
 
 
 def get_campaign_donors_list(campaign_id, df):

@@ -1,7 +1,9 @@
 import csv
 
-DATAFILE_SOURCE = "../data/processed_data/contributions/consolidated_winred.csv"
-OUTFILE_DESTINATION = "../data/processed_data/contributions/candidate_donor_mappings.csv"
+committee_for_analysis = "winred"
+
+DATAFILE_SOURCE = f"../data/processed_data/contributions/consolidated_{committee_for_analysis}.csv"
+OUTFILE_DESTINATION = f"../data/processed_data/contributions/{committee_for_analysis}_candidate_donor_mappings.csv"
 
 
 def process_row(row):

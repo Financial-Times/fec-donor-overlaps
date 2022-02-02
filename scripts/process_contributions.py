@@ -2,8 +2,10 @@ import os
 import csv
 import json
 
-DATAFILE_DIRECTORY = "../data/winred"
-OUTFILE_DESTINATION = "../data/processed_data/contributions/consolidated_winred.csv"
+committee_for_analysis = "winred"
+
+DATAFILE_DIRECTORY = f"../data/{committee_for_analysis}"
+OUTFILE_DESTINATION = f"../data/processed_data/contributions/consolidated_{committee_for_analysis}.csv"
 # saving some file size by removing "employer", "occupation" for now, but
 # ...some version of this processed data may eventually need to include these
 RETAINED_FIELDS = ["first_name", "last_name", "zip", "date", "amount", "cycle"]
@@ -50,8 +52,7 @@ def process_row(row, ccl_mappings, direct=False):
     return out_data
 
 
-def process_file(file, ccl_mappings, direct=False):
-    out_data = []
+def process_file(file, ccl_mappings, out_csv, direct=False):
     row_count = 0
 
     reader = csv.DictReader(file)
@@ -61,7 +62,7 @@ def process_file(file, ccl_mappings, direct=False):
             current_row = next(reader)
             processed_row_data = process_row(current_row, ccl_mappings, direct)
             if processed_row_data:
-                out_data.append(processed_row_data)
+                out_csv.writerow(processed_row_data)
         except StopIteration:
             rows_remaining = False
 
@@ -69,29 +70,24 @@ def process_file(file, ccl_mappings, direct=False):
             print(f"Finished processing {row_count:,} rows")
         row_count += 1
 
-    return out_data
-
 
 def main():
-    processed_rows = []
-
     with open("../data/processed_data/ccl_mapping.json", "r") as f:
         ccl_mappings = json.load(f)
 
-    winred_files = [x for x in os.listdir(DATAFILE_DIRECTORY) if ".csv" in x]
-    for file in winred_files:
-        with open(DATAFILE_DIRECTORY + "/" + file, 'r') as f:
-            print(f"===== FILE: {file} =====")
-            direct = "direct" in file
-            processed_rows += process_file(f, ccl_mappings, direct)
-
-    print("Finished processing files. Outputting...")
-
-    with open(OUTFILE_DESTINATION, 'w') as f:
-        out_csv = csv.DictWriter(f, fieldnames=list(processed_rows[0].keys()))
+    with open(OUTFILE_DESTINATION, 'w') as out_file:
+        all_fields = ["first_name", "last_name", "zip", "date", "amount",
+                      "cycle"] + ["donor_id", "destination_committee", "destination_campaign"]
+        out_csv = csv.DictWriter(out_file, fieldnames=all_fields)
         out_csv.writeheader()
-        for row in processed_rows:
-            out_csv.writerow(row)
+
+        winred_files = [x for x in os.listdir(
+            DATAFILE_DIRECTORY) if ".csv" in x]
+        for file in winred_files:
+            with open(DATAFILE_DIRECTORY + "/" + file, 'r') as f:
+                print(f"===== FILE: {file} =====")
+                direct = "direct" in file
+                process_file(f, ccl_mappings, out_csv, direct)
 
 
 if __name__ == "__main__":

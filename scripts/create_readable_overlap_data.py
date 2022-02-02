@@ -1,12 +1,13 @@
 import json
 import csv
 
+committee_for_analysis = "winred"
 
-OVERLAP_SOURCE = "../data/processed_data/overlap/donor_overlap.csv"
-TOTALS_SOURCE = "../data/processed_data/overlap/donor_totals.csv"
+OVERLAP_SOURCE = f"../data/processed_data/overlap/{committee_for_analysis}_donor_overlap.csv"
+TOTALS_SOURCE = f"../data/processed_data/overlap/{committee_for_analysis}_donor_totals.csv"
 CAMPAIGN_DATA_SOURCE = "../data/processed_data/campaign_data.json"
 
-OUTFILE_DESTINATION = "../data/processed_data/overlap/rich_overlap_data.csv"
+OUTFILE_DESTINATION = f"../data/processed_data/overlap/{committee_for_analysis}_rich_overlap_data.csv"
 
 
 def process_row(row, donor_totals, campaign_details_data, reverse_direction=False):
@@ -52,6 +53,9 @@ def append_rich_data(overlap_counts, donor_totals, campaign_details_data):
         if row["campaign_1"] == row["campaign_2"]:
             continue
 
+        if row["campaign_1"] not in campaign_details_data.keys() or row["campaign_2"] not in campaign_details_data.keys():
+            continue
+
         # We excluded duplicates to keep the data size down on the last script, but here, for ease of searching/filtering,
         # ...we do probably want to represent each overlap both ways, so there will be twice as much data, but it will be easier
         # ...to locate what we're looking for. Unless/until we put this in a database and normalize a little, this is probably better
@@ -61,7 +65,8 @@ def append_rich_data(overlap_counts, donor_totals, campaign_details_data):
 
         # Adding a threshold of at least 20 overlapping donors before adding to output file
         # This alone basically cuts the file size by more than half
-        if processed_row["overlap_count"] > 20:
+        # if processed_row["overlap_count"] >= 50 and processed_row["incoming_candidate_total_donors"] >= 500 and processed_row["outgoing_candidate_total_donors"] >= 500:
+        if processed_row["overlap_count"] >= 20:
             output_data += [processed_row, reversed_processed_row]
 
     return output_data
