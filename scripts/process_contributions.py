@@ -2,7 +2,7 @@ import os
 import csv
 import json
 
-committee_for_analysis = "winred"
+committee_for_analysis = "actblue"
 
 DATAFILE_DIRECTORY = f"../data/{committee_for_analysis}"
 OUTFILE_DESTINATION = f"../data/processed_data/contributions/consolidated_{committee_for_analysis}.csv"
@@ -51,9 +51,15 @@ def process_row(row, ccl_mappings, campaign_data, direct=False):
     else:
         out_data["destination_campaign"] = affiliated_campaign
 
+    if campaign_data.get(affiliated_campaign) == None:
+        return None
+
     affiliated_campaign_cycles = str(campaign_data.get(
         affiliated_campaign)["all_cycles"])
 
+    # This ensures that our consolidated dataset only includes "in-cycle" contributions
+    # (e.g. we won't consider contributions to 2022 senate candidates during the 2020 cycle)
+    # Including these contributions skews overlap data in a way that's misleading
     if str(row["cycle"]) not in affiliated_campaign_cycles:
         return None
     else:
@@ -96,7 +102,7 @@ def main():
 
         winred_files = [x for x in os.listdir(
             DATAFILE_DIRECTORY) if ".csv" in x]
-        for file in winred_files:
+        for file in sorted(winred_files):
             with open(DATAFILE_DIRECTORY + "/" + file, 'r') as f:
                 print(f"===== FILE: {file} =====")
 

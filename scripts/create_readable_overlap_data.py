@@ -1,7 +1,7 @@
 import json
 import csv
 
-committee_for_analysis = "winred"
+committee_for_analysis = "actblue"
 
 OVERLAP_SOURCE = f"../data/processed_data/overlap/{committee_for_analysis}_donor_overlap.csv"
 TOTALS_SOURCE = f"../data/processed_data/overlap/{committee_for_analysis}_donor_totals.csv"

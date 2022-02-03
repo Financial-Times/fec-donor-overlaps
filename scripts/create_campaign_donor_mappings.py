@@ -1,6 +1,6 @@
 import csv
 
-committee_for_analysis = "winred"
+committee_for_analysis = "actblue"
 
 DATAFILE_SOURCE = f"../data/processed_data/contributions/consolidated_{committee_for_analysis}.csv"
 OUTFILE_DESTINATION = f"../data/processed_data/contributions/{committee_for_analysis}_candidate_donor_mappings.csv"

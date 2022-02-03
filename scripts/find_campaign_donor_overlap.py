@@ -4,7 +4,7 @@ import json
 import csv
 import pandas as pd
 
-committee_for_analysis = "winred"
+committee_for_analysis = "actblue"
 
 DATAFILE_SOURCE = f"../data/processed_data/contributions/{committee_for_analysis}_candidate_donor_mappings.csv"
 DONOR_LIST_SOURCE = f"../data/processed_data/overlap/{committee_for_analysis}_donor_lists.json"
@@ -25,7 +25,7 @@ def get_donor_lists(all_campaigns, mappings_df):
     try:
         last_modified_time = os.path.getmtime(DONOR_LIST_SOURCE)
         # Checks if cached file has been updated in the last 15 days (1,296,000 seconds)
-        if time.time() - last_modified_time > 1296000:
+        if time.time() - last_modified_time > 1296:
             cached_file = False
     except FileNotFoundError:
         cached_file = False
