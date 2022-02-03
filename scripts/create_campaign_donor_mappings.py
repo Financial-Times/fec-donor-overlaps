@@ -10,7 +10,8 @@ def process_row(row):
     # By eventually piling these unique hashes (donor_id + "/~/" + campaign_id) into a set
     # ...we can quickly eliminate any duplicates without holding the whole, very large datafile
     # ...in memory and then re-parse the individual fields into rows using the unique separator ("/~/")
-    set_entry = row["donor_id"] + "/~/" + row["destination_campaign"]
+    set_entry = row["donor_id"] + "/~/" + \
+        row["cycle"] + "/~/" + row["destination_campaign"]
     return set_entry
 
 
@@ -37,7 +38,7 @@ def process_file(file):
         entry_data = entry.split("/~/")
         out_data.append({
             "donor_id": entry_data[0],
-            "campaign_id": entry_data[1]
+            "campaign_id": entry_data[2] + "~" + entry_data[1]
         })
 
     return out_data

@@ -12,33 +12,39 @@ OUTFILE_DESTINATION = f"../data/processed_data/overlap/{committee_for_analysis}_
 
 def process_row(row, donor_totals, campaign_details_data, reverse_direction=False):
     if reverse_direction == True:
-        outgoing_candidate_id = row["campaign_2"]
-        incoming_candidate_id = row["campaign_1"]
+        outgoing_key = row["campaign_2"]
+        incoming_key = row["campaign_1"]
     else:
-        outgoing_candidate_id = row["campaign_1"]
-        incoming_candidate_id = row["campaign_2"]
+        outgoing_key = row["campaign_1"]
+        incoming_key = row["campaign_2"]
+
+    outgoing_candidate_id = outgoing_key.split("~")[0]
+    incoming_candidate_id = incoming_key.split("~")[0]
+
+    outgoing_candidate_cycle = outgoing_key.split("~")[1]
+    incoming_candidate_cycle = incoming_key.split("~")[1]
 
     outgoing_candidate_data = campaign_details_data[outgoing_candidate_id]
     incoming_candidate_data = campaign_details_data[incoming_candidate_id]
 
     row_output_data = {
-        "outgoing_candidate_id": outgoing_candidate_id,
+        "outgoing_candidate_id": outgoing_key,
         "outgoing_candidate_name": outgoing_candidate_data["full_name"],
         "outgoing_candidate_office": outgoing_candidate_data["office"],
         "outgoing_candidate_state": outgoing_candidate_data["state"],
         "outgoing_candidate_district": outgoing_candidate_data["district"],
-        "outgoing_candidate_cycle": outgoing_candidate_data["campaign_cycle"],
-        "outgoing_candidate_total_donors": int(donor_totals[outgoing_candidate_id]),
-        "incoming_candidate_id": incoming_candidate_id,
+        "outgoing_candidate_cycle": outgoing_candidate_cycle,
+        "outgoing_candidate_total_donors": int(donor_totals[outgoing_key]),
+        "incoming_candidate_id": incoming_key,
         "incoming_candidate_name": incoming_candidate_data["full_name"],
         "incoming_candidate_office": incoming_candidate_data["office"],
         "incoming_candidate_state": incoming_candidate_data["state"],
         "incoming_candidate_district": incoming_candidate_data["district"],
-        "incoming_candidate_cycle": incoming_candidate_data["campaign_cycle"],
-        "incoming_candidate_total_donors": int(donor_totals[incoming_candidate_id]),
+        "incoming_candidate_cycle": incoming_candidate_cycle,
+        "incoming_candidate_total_donors": int(donor_totals[incoming_key]),
         "overlap_count": int(row["overlap_count"]),
-        "overlap_pct_of_outgoing": round(int(row["overlap_count"]) / int(donor_totals[outgoing_candidate_id]), 4),
-        "overlap_pct_of_incoming": round(int(row["overlap_count"]) / int(donor_totals[incoming_candidate_id]), 4)
+        "overlap_pct_of_outgoing": round(int(row["overlap_count"]) / int(donor_totals[outgoing_key]), 4),
+        "overlap_pct_of_incoming": round(int(row["overlap_count"]) / int(donor_totals[incoming_key]), 4)
     }
 
     return row_output_data
@@ -53,7 +59,7 @@ def append_rich_data(overlap_counts, donor_totals, campaign_details_data):
         if row["campaign_1"] == row["campaign_2"]:
             continue
 
-        if row["campaign_1"] not in campaign_details_data.keys() or row["campaign_2"] not in campaign_details_data.keys():
+        if row["campaign_1"].split("~")[0] not in campaign_details_data.keys() or row["campaign_2"].split("~")[0] not in campaign_details_data.keys():
             continue
 
         # We excluded duplicates to keep the data size down on the last script, but here, for ease of searching/filtering,
@@ -65,8 +71,8 @@ def append_rich_data(overlap_counts, donor_totals, campaign_details_data):
 
         # Adding a threshold of at least 20 overlapping donors before adding to output file
         # This alone basically cuts the file size by more than half
-        # if processed_row["overlap_count"] >= 50 and processed_row["incoming_candidate_total_donors"] >= 500 and processed_row["outgoing_candidate_total_donors"] >= 500:
-        if processed_row["overlap_count"] >= 25:
+        if processed_row["overlap_count"] >= 50 and processed_row["incoming_candidate_total_donors"] >= 500 and processed_row["outgoing_candidate_total_donors"] >= 500:
+            # if processed_row["overlap_count"] >= 25:
             output_data += [processed_row, reversed_processed_row]
 
     return output_data

@@ -51,12 +51,14 @@ def process_row(row, ccl_mappings, campaign_data, direct=False):
     else:
         out_data["destination_campaign"] = affiliated_campaign
 
-    affiliated_campaign_cycle = str(campaign_data.get(
-        affiliated_campaign)["campaign_cycle"])
-    if affiliated_campaign_cycle != str(row["cycle"]):
-        return None
+    affiliated_campaign_cycles = str(campaign_data.get(
+        affiliated_campaign)["all_cycles"])
 
-    return out_data
+    if str(row["cycle"]) not in affiliated_campaign_cycles:
+        return None
+    else:
+        out_data["cycle"] = str(row["cycle"])
+        return out_data
 
 
 def process_file(file, ccl_mappings, campaign_data, out_csv, direct=False):

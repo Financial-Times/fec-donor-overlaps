@@ -3,8 +3,7 @@ import json
 from posixpath import split
 
 
-def process_rows(rows):
-    output_data = {}
+def process_rows(rows, output_data):
     for row in rows:
         split_row = row.split("|")
 
@@ -21,6 +20,12 @@ def process_rows(rows):
         office = split_row[5]
         district = split_row[6]
 
+        existing_data = output_data.get(campaign_id)
+        if existing_data:
+            cycles = list(set(existing_data["all_cycles"] + [campaign_cycle]))
+        else:
+            cycles = [campaign_cycle]
+
         output_data[campaign_id] = {
             "id": campaign_id,
             "full_name": name,
@@ -28,6 +33,7 @@ def process_rows(rows):
             "last_name": surname.strip(),
             "party": party,
             "campaign_cycle": campaign_cycle,
+            "all_cycles": cycles,
             "state": state,
             "office": office,
             "district": district
@@ -47,9 +53,9 @@ def main():
     for file in sorted(campaign_files):
         with open(campaign_prefix + "/" + file, 'r') as f:
             rows = [x for x in f.readlines()]
-            campaign_data = process_rows(rows)
+            out_data = process_rows(rows, out_data)
 
-            out_data.update(campaign_data)
+            # out_data.update(campaign_data)
 
     with open(output_location, "w") as f:
         json.dump(out_data, f)
