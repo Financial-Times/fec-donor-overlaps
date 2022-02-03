@@ -69,9 +69,10 @@ def append_rich_data(overlap_counts, donor_totals, campaign_details_data):
         reversed_processed_row = process_row(
             row, donor_totals, campaign_details_data, reverse_direction=True)
 
-        # Adding a threshold of at least 20 overlapping donors before adding to output file
+        # Adding a threshold of at least 50 overlapping donors and 500 total donors before adding to output file
         # This alone basically cuts the file size by more than half
-        if processed_row["overlap_count"] >= 50 and processed_row["incoming_candidate_total_donors"] >= 500 and processed_row["outgoing_candidate_total_donors"] >= 500:
+        # Only exception will be if it's an overlap that involves Trump (P80001571) or Biden (P80000722)
+        if (processed_row["overlap_count"] >= 50 and processed_row["incoming_candidate_total_donors"] >= 500 and processed_row["outgoing_candidate_total_donors"] >= 500) or (processed_row["outgoing_candidate_id"] == "P80001571" or processed_row["outgoing_candidate_id"] == "P80000722"):
             # if processed_row["overlap_count"] >= 25:
             output_data += [processed_row, reversed_processed_row]
 
