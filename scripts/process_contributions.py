@@ -20,12 +20,13 @@ direct_file_field_mapping = {
 }
 
 
-def process_row(row, ccl_mappings, direct=False):
+def process_row(row, ccl_mappings, campaign_data, direct=False):
     if direct:
         for field in direct_file_field_mapping.keys():
             row[direct_file_field_mapping[field]] = row[field]
 
         row["zip"] = row["zip"][:5]
+        row["cycle"] = "2022"
     # On WinRed/ActBlue filings, contributions towards committees contain the destination committee in the memo text
     # (e.g. "Earmarked for NRCC (C00075820)"). Here, we'll want to filter out any refunds, etc (non-contributions)
     # and any rows where row is a contribution, but the committee isn't specified in parentheses (very rare)
@@ -47,12 +48,18 @@ def process_row(row, ccl_mappings, direct=False):
     affiliated_campaign = ccl_mappings.get(destination_committee)
     if affiliated_campaign == None:
         return None
-    out_data["destination_campaign"] = affiliated_campaign
+    else:
+        out_data["destination_campaign"] = affiliated_campaign
+
+    affiliated_campaign_cycle = str(campaign_data.get(
+        affiliated_campaign)["campaign_cycle"])
+    if affiliated_campaign_cycle != str(row["cycle"]):
+        return None
 
     return out_data
 
 
-def process_file(file, ccl_mappings, out_csv, direct=False):
+def process_file(file, ccl_mappings, campaign_data, out_csv, direct=False):
     row_count = 0
 
     reader = csv.DictReader(file)
@@ -60,7 +67,8 @@ def process_file(file, ccl_mappings, out_csv, direct=False):
     while rows_remaining:
         try:
             current_row = next(reader)
-            processed_row_data = process_row(current_row, ccl_mappings, direct)
+            processed_row_data = process_row(
+                current_row, ccl_mappings, campaign_data, direct)
             if processed_row_data:
                 out_csv.writerow(processed_row_data)
         except StopIteration:
@@ -75,6 +83,9 @@ def main():
     with open("../data/processed_data/ccl_mapping.json", "r") as f:
         ccl_mappings = json.load(f)
 
+    with open("../data/processed_data/campaign_data.json", "r") as f:
+        campaign_data = json.load(f)
+
     with open(OUTFILE_DESTINATION, 'w') as out_file:
         all_fields = ["first_name", "last_name", "zip", "date", "amount",
                       "cycle"] + ["donor_id", "destination_committee", "destination_campaign"]
@@ -86,8 +97,9 @@ def main():
         for file in winred_files:
             with open(DATAFILE_DIRECTORY + "/" + file, 'r') as f:
                 print(f"===== FILE: {file} =====")
+
                 direct = "direct" in file
-                process_file(f, ccl_mappings, out_csv, direct)
+                process_file(f, ccl_mappings, campaign_data, out_csv, direct)
 
 
 if __name__ == "__main__":

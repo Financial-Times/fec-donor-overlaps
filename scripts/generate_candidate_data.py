@@ -44,7 +44,7 @@ def main():
     campaign_files = [x for x in os.listdir(
         campaign_prefix) if x != ".DS_Store"]
 
-    for file in campaign_files:
+    for file in sorted(campaign_files):
         with open(campaign_prefix + "/" + file, 'r') as f:
             rows = [x for x in f.readlines()]
             campaign_data = process_rows(rows)
