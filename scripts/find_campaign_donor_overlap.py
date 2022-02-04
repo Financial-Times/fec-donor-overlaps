@@ -25,7 +25,7 @@ def get_donor_lists(all_campaigns, mappings_df):
     try:
         last_modified_time = os.path.getmtime(DONOR_LIST_SOURCE)
         # Checks if cached file has been updated in the last 15 days (1,296,000 seconds)
-        if time.time() - last_modified_time > 1296:
+        if time.time() - last_modified_time > 1296000:
             cached_file = False
     except FileNotFoundError:
         cached_file = False
