@@ -1,6 +1,6 @@
 # FEC Donor Overlaps
 
-Scripts for processing raw FEC data (particularly ActBlue/WinRed filings) or itemized filings from ProPublica, aggregating them, and producing donor overlap figures.
+Scripts for processing raw FEC data (particularly ActBlue/WinRed filings) or itemized filings from ProPublica, aggregating them, and producing donor overlap figures. Used for the charts/data in [this story](https://www.ft.com/content/27cf21ac-dabc-45a5-813f-0223572b908f).
 
 For now, we're going to work mainly with already-processed filings from [ActBlue](https://projects.propublica.org/itemizer/committee/C00401224/2022)/[WinRed](https://projects.propublica.org/itemizer/committee/C00694323/2022) in CSV format, from ProPublica's [FEC Itemizer](https://projects.propublica.org/itemizer). We can work with raw `.fec` files directly from the FEC site, as well, but need to process them with a tool like [FastFEC](https://github.com/washingtonpost/FastFEC) first.
 
